@@ -41,22 +41,30 @@ public class CourseManagementPanel extends JPanel {
         deleteButton = new JButton("删除课程");
         importButton = new JButton("导入Excel");
         
-        // 设置按钮样式
-        addButton.setBackground(new Color(46, 139, 87));
-        addButton.setForeground(Color.WHITE);
+        // 优化按钮样式
+        addButton.setBackground(new Color(46, 204, 113));
+        addButton.setForeground(new Color(30, 30, 30));
         addButton.setFocusPainted(false);
+        addButton.setFont(new Font("微软雅黑", Font.BOLD, 14));
+        addButton.setBorder(BorderFactory.createLineBorder(new Color(46, 204, 113), 1, true));
         
-        editButton.setBackground(new Color(70, 130, 180));
-        editButton.setForeground(Color.WHITE);
+        editButton.setBackground(new Color(0, 123, 167));
+        editButton.setForeground(new Color(30, 30, 30));
         editButton.setFocusPainted(false);
+        editButton.setFont(new Font("微软雅黑", Font.BOLD, 14));
+        editButton.setBorder(BorderFactory.createLineBorder(new Color(0, 123, 167), 1, true));
         
-        deleteButton.setBackground(new Color(220, 20, 60));
-        deleteButton.setForeground(Color.WHITE);
+        deleteButton.setBackground(new Color(231, 76, 60));
+        deleteButton.setForeground(new Color(30, 30, 30));
         deleteButton.setFocusPainted(false);
+        deleteButton.setFont(new Font("微软雅黑", Font.BOLD, 14));
+        deleteButton.setBorder(BorderFactory.createLineBorder(new Color(231, 76, 60), 1, true));
         
         importButton.setBackground(new Color(255, 140, 0));
-        importButton.setForeground(Color.WHITE);
+        importButton.setForeground(new Color(30, 30, 30));
         importButton.setFocusPainted(false);
+        importButton.setFont(new Font("微软雅黑", Font.BOLD, 14));
+        importButton.setBorder(BorderFactory.createLineBorder(new Color(255, 140, 0), 1, true));
         
         // 创建表格模型
         String[] columnNames = {"ID", "课程名称", "教师", "地点", "星期", "开始时间", "结束时间", "类型", "描述"};
@@ -67,18 +75,33 @@ public class CourseManagementPanel extends JPanel {
             }
         };
         
-        courseTable = new JTable(tableModel);
+        courseTable = new JTable(tableModel) {
+            @Override
+            public Component prepareRenderer(javax.swing.table.TableCellRenderer renderer, int row, int column) {
+                Component c = super.prepareRenderer(renderer, row, column);
+                if (!isRowSelected(row)) {
+                    c.setBackground(row % 2 == 0 ? new Color(245, 250, 255) : Color.WHITE);
+                } else {
+                    c.setBackground(new Color(204, 232, 255));
+                }
+                c.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+                return c;
+            }
+        };
         courseTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        courseTable.getTableHeader().setBackground(new Color(240, 240, 240));
-        courseTable.getTableHeader().setFont(new Font("微软雅黑", Font.BOLD, 12));
+        courseTable.setSelectionBackground(new Color(0, 123, 167));
+        courseTable.setSelectionForeground(Color.WHITE);
+        courseTable.getTableHeader().setBackground(new Color(0, 123, 167));
+        courseTable.getTableHeader().setForeground(Color.WHITE);
+        courseTable.getTableHeader().setFont(new Font("微软雅黑", Font.BOLD, 15));
     }
     
     private void setupLayout() {
         setLayout(new BorderLayout());
         
-        // 工具栏
         JPanel toolbarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         toolbarPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        toolbarPanel.setBackground(new Color(240, 248, 255));
         
         toolbarPanel.add(addButton);
         toolbarPanel.add(editButton);
@@ -88,7 +111,6 @@ public class CourseManagementPanel extends JPanel {
         
         add(toolbarPanel, BorderLayout.NORTH);
         
-        // 课程列表
         JScrollPane scrollPane = new JScrollPane(courseTable);
         scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         add(scrollPane, BorderLayout.CENTER);
@@ -175,6 +197,10 @@ public class CourseManagementPanel extends JPanel {
     }
     
     private void importFromExcel() {
-        JOptionPane.showMessageDialog(this, "Excel导入功能待实现", "提示", JOptionPane.INFORMATION_MESSAGE);
+        ExcelImportDialog dialog = new ExcelImportDialog((JFrame) SwingUtilities.getWindowAncestor(this), currentUser);
+        dialog.setVisible(true);
+        
+        // 导入完成后刷新课程列表
+        loadCourses();
     }
 } 

@@ -35,14 +35,18 @@ public class LoginFrame extends JFrame {
         loginButton = new JButton("登录");
         registerButton = new JButton("注册");
         
-        // 设置按钮样式
-        loginButton.setBackground(new Color(70, 130, 180));
-        loginButton.setForeground(Color.WHITE);
+        // 优化按钮样式
+        loginButton.setBackground(new Color(0, 123, 167));
+        loginButton.setForeground(new Color(30, 30, 30));
         loginButton.setFocusPainted(false);
+        loginButton.setFont(new Font("微软雅黑", Font.BOLD, 15));
+        loginButton.setBorder(BorderFactory.createLineBorder(new Color(0, 123, 167), 1, true));
         
-        registerButton.setBackground(new Color(46, 139, 87));
-        registerButton.setForeground(Color.WHITE);
+        registerButton.setBackground(new Color(46, 204, 113));
+        registerButton.setForeground(new Color(30, 30, 30));
         registerButton.setFocusPainted(false);
+        registerButton.setFont(new Font("微软雅黑", Font.BOLD, 15));
+        registerButton.setBorder(BorderFactory.createLineBorder(new Color(46, 204, 113), 1, true));
     }
     
     private void setupLayout() {
