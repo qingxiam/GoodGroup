@@ -133,8 +133,7 @@ public class MainFrame extends JFrame {
     }
     
     private void openReminderSettings() {
-        NotificationSettingsDialog dialog = new NotificationSettingsDialog(this, currentUser);
-        dialog.setVisible(true);
+        JOptionPane.showMessageDialog(this, "提醒设置功能待实现", "提示", JOptionPane.INFORMATION_MESSAGE);
     }
     
     private void testReminder() {
