@@ -1,0 +1,274 @@
+package com.schedule.view;
+
+import com.schedule.controller.CourseController;
+import com.schedule.model.Course;
+import com.schedule.model.User;
+
+import javax.swing.*;
+import java.awt.*;
+import java.time.DayOfWeek;
+import java.time.LocalTime;
+import java.time.format.TextStyle;
+import java.util.Locale;
+
+/**
+ * 课程编辑对话框
+ */
+public class CourseDialog extends JDialog {
+    private CourseController courseController;
+    private User currentUser;
+    private Course course;
+    private boolean confirmed = false;
+    
+    // 表单组件
+    private JTextField nameField;
+    private JTextField teacherField;
+    private JTextField locationField;
+    private JComboBox<String> dayOfWeekComboBox;
+    private JSpinner startTimeSpinner;
+    private JSpinner endTimeSpinner;
+    private JComboBox<Course.CourseType> typeComboBox;
+    private JTextArea descriptionArea;
+    private JCheckBox reminderCheckBox;
+    private JButton saveButton;
+    private JButton cancelButton;
+    
+    public CourseDialog(JFrame parent, CourseController courseController, User currentUser, Course course) {
+        super(parent, course == null ? "添加课程" : "编辑课程", true);
+        this.courseController = courseController;
+        this.currentUser = currentUser;
+        this.course = course;
+        initComponents();
+        setupLayout();
+        setupListeners();
+        loadCourseData();
+    }
+    
+    private void initComponents() {
+        setSize(400, 500);
+        setLocationRelativeTo(getOwner());
+        setResizable(false);
+        
+        nameField = new JTextField(20);
+        teacherField = new JTextField(20);
+        locationField = new JTextField(20);
+        
+        // 星期选择
+        String[] days = {"星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"};
+        dayOfWeekComboBox = new JComboBox<>(days);
+        
+        // 时间选择器
+        SpinnerDateModel startModel = new SpinnerDateModel();
+        startTimeSpinner = new JSpinner(startModel);
+        JSpinner.DateEditor startEditor = new JSpinner.DateEditor(startTimeSpinner, "HH:mm");
+        startTimeSpinner.setEditor(startEditor);
+        
+        SpinnerDateModel endModel = new SpinnerDateModel();
+        endTimeSpinner = new JSpinner(endModel);
+        JSpinner.DateEditor endEditor = new JSpinner.DateEditor(endTimeSpinner, "HH:mm");
+        endTimeSpinner.setEditor(endEditor);
+        
+        // 课程类型选择
+        typeComboBox = new JComboBox<>(Course.CourseType.values());
+        
+        // 描述文本区域
+        descriptionArea = new JTextArea(4, 20);
+        descriptionArea.setLineWrap(true);
+        descriptionArea.setWrapStyleWord(true);
+        
+        // 提醒复选框
+        reminderCheckBox = new JCheckBox("启用提醒", true);
+        
+        // 按钮
+        saveButton = new JButton("保存");
+        cancelButton = new JButton("取消");
+        
+        // 设置按钮样式
+        saveButton.setBackground(new Color(46, 139, 87));
+        saveButton.setForeground(Color.WHITE);
+        saveButton.setFocusPainted(false);
+        
+        cancelButton.setBackground(new Color(220, 20, 60));
+        cancelButton.setForeground(Color.WHITE);
+        cancelButton.setFocusPainted(false);
+    }
+    
+    private void setupLayout() {
+        setLayout(new BorderLayout());
+        
+        // 主面板
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.anchor = GridBagConstraints.WEST;
+        
+        // 课程名称
+        addFormField(mainPanel, "课程名称:", nameField, gbc, 0);
+        
+        // 教师
+        addFormField(mainPanel, "教师:", teacherField, gbc, 1);
+        
+        // 地点
+        addFormField(mainPanel, "地点:", locationField, gbc, 2);
+        
+        // 星期
+        addFormField(mainPanel, "星期:", dayOfWeekComboBox, gbc, 3);
+        
+        // 开始时间
+        addFormField(mainPanel, "开始时间:", startTimeSpinner, gbc, 4);
+        
+        // 结束时间
+        addFormField(mainPanel, "结束时间:", endTimeSpinner, gbc, 5);
+        
+        // 课程类型
+        addFormField(mainPanel, "课程类型:", typeComboBox, gbc, 6);
+        
+        // 描述
+        JLabel descLabel = new JLabel("描述:");
+        descLabel.setFont(new Font("微软雅黑", Font.PLAIN, 14));
+        gbc.gridx = 0;
+        gbc.gridy = 7;
+        gbc.anchor = GridBagConstraints.NORTHEAST;
+        mainPanel.add(descLabel, gbc);
+        
+        JScrollPane descScrollPane = new JScrollPane(descriptionArea);
+        descScrollPane.setPreferredSize(new Dimension(250, 80));
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        mainPanel.add(descScrollPane, gbc);
+        
+        // 提醒设置
+        gbc.gridx = 0;
+        gbc.gridy = 8;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.WEST;
+        mainPanel.add(reminderCheckBox, gbc);
+        
+        // 按钮面板
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
+        buttonPanel.add(saveButton);
+        buttonPanel.add(cancelButton);
+        
+        gbc.gridx = 0;
+        gbc.gridy = 9;
+        gbc.gridwidth = 2;
+        gbc.insets = new Insets(20, 0, 0, 0);
+        mainPanel.add(buttonPanel, gbc);
+        
+        add(mainPanel, BorderLayout.CENTER);
+    }
+    
+    private void addFormField(JPanel panel, String labelText, JComponent field, GridBagConstraints gbc, int row) {
+        JLabel label = new JLabel(labelText);
+        label.setFont(new Font("微软雅黑", Font.PLAIN, 14));
+        
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        gbc.gridwidth = 1;
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.anchor = GridBagConstraints.EAST;
+        panel.add(label, gbc);
+        
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        panel.add(field, gbc);
+    }
+    
+    private void setupListeners() {
+        saveButton.addActionListener(e -> handleSave());
+        cancelButton.addActionListener(e -> dispose());
+        
+        // 回车键保存
+        getRootPane().setDefaultButton(saveButton);
+    }
+    
+    private void loadCourseData() {
+        if (course != null) {
+            // 编辑模式，加载现有数据
+            nameField.setText(course.getName());
+            teacherField.setText(course.getTeacher());
+            locationField.setText(course.getLocation());
+            
+            // 设置星期
+            String dayName = course.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.CHINESE);
+            dayOfWeekComboBox.setSelectedItem(dayName);
+            
+            // 设置时间（这里需要转换，简化处理）
+            // 实际项目中需要更复杂的时间处理
+            
+            typeComboBox.setSelectedItem(course.getType());
+            descriptionArea.setText(course.getDescription());
+            reminderCheckBox.setSelected(course.isReminderEnabled());
+        }
+    }
+    
+    private void handleSave() {
+        String name = nameField.getText().trim();
+        String teacher = teacherField.getText().trim();
+        String location = locationField.getText().trim();
+        String dayName = (String) dayOfWeekComboBox.getSelectedItem();
+        Course.CourseType type = (Course.CourseType) typeComboBox.getSelectedItem();
+        String description = descriptionArea.getText().trim();
+        boolean reminderEnabled = reminderCheckBox.isSelected();
+        
+        // 验证输入
+        if (name.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "请输入课程名称", "提示", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        // 转换星期
+        DayOfWeek dayOfWeek = null;
+        for (DayOfWeek day : DayOfWeek.values()) {
+            if (day.getDisplayName(TextStyle.FULL, Locale.CHINESE).equals(dayName)) {
+                dayOfWeek = day;
+                break;
+            }
+        }
+        
+        // 创建或更新课程对象
+        if (course == null) {
+            course = new Course();
+            course.setUserId(currentUser.getId());
+        }
+        
+        course.setName(name);
+        course.setTeacher(teacher);
+        course.setLocation(location);
+        course.setDayOfWeek(dayOfWeek);
+        course.setStartTime(LocalTime.of(8, 0)); // 简化处理
+        course.setEndTime(LocalTime.of(9, 40)); // 简化处理
+        course.setType(type);
+        course.setDescription(description);
+        course.setReminderEnabled(reminderEnabled);
+        
+        // 验证课程信息
+        String validationError = courseController.validateCourse(course);
+        if (validationError != null) {
+            JOptionPane.showMessageDialog(this, validationError, "验证错误", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        // 保存课程
+        boolean success;
+        if (course.getId() == 0) {
+            success = courseController.addCourse(course);
+        } else {
+            success = courseController.updateCourse(course);
+        }
+        
+        if (success) {
+            JOptionPane.showMessageDialog(this, "保存成功", "成功", JOptionPane.INFORMATION_MESSAGE);
+            confirmed = true;
+            dispose();
+        } else {
+            JOptionPane.showMessageDialog(this, "保存失败", "错误", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    public boolean isConfirmed() {
+        return confirmed;
+    }
+} 
