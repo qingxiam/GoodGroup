@@ -13,7 +13,7 @@ apache-maven-3.9.10
 “好”组
 
 刘浩天
-17420232200544@stu.xmu.edu.cn
+liuhaotian@stu.xmu.edu.cn
 
 月令
 QQ 3579427214@qq.com
