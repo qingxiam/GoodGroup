@@ -3,6 +3,7 @@ package com.schedule.view;
 import com.schedule.controller.CourseController;
 import com.schedule.model.Course;
 import com.schedule.model.User;
+import com.schedule.util.TimeSlotUtil;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -137,10 +138,8 @@ public class SchedulePanel extends JPanel {
     }
     
     private void loadWeekView(List<Course> courses) {
-        // 定义时间段
-        String[] timeSlots = {
-            "08:00-09:40", "10:00-11:40", "14:00-15:40", "16:00-17:40", "19:00-20:40"
-        };
+        // 使用新的时间段设置
+        String[] timeSlots = TimeSlotUtil.getTimeSlotStrings();
         
         for (String timeSlot : timeSlots) {
             Object[] row = new Object[8];
@@ -161,9 +160,7 @@ public class SchedulePanel extends JPanel {
         // 获取当前选中的星期
         DayOfWeek selectedDay = DayOfWeek.MONDAY; // 默认显示星期一
         
-        String[] timeSlots = {
-            "08:00-09:40", "10:00-11:40", "14:00-15:40", "16:00-17:40", "19:00-20:40"
-        };
+        String[] timeSlots = TimeSlotUtil.getTimeSlotStrings();
         
         for (String timeSlot : timeSlots) {
             Object[] row = new Object[2];
@@ -181,7 +178,9 @@ public class SchedulePanel extends JPanel {
         for (Course course : courses) {
             if (course.getDayOfWeek() == dayOfWeek) {
                 String courseTime = course.getStartTime() + "-" + course.getEndTime();
-                if (courseTime.equals(timeSlot)) {
+                // 从时间段字符串中提取时间范围进行匹配
+                String timeRange = timeSlot.substring(timeSlot.indexOf(" ") + 1);
+                if (courseTime.equals(timeRange)) {
                     return String.format("<html><b>%s</b><br>%s<br>%s</html>", 
                         course.getName(), course.getTeacher(), course.getLocation());
                 }

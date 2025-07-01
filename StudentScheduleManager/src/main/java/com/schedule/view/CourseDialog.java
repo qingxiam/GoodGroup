@@ -13,6 +13,7 @@ import java.util.Locale;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
+import com.schedule.util.TimeSlotUtil;
 
 /**
  * 课程编辑对话框
@@ -28,8 +29,8 @@ public class CourseDialog extends JDialog {
     private JTextField teacherField;
     private JTextField locationField;
     private JComboBox<String> dayOfWeekComboBox;
-    private JSpinner startTimeSpinner;
-    private JSpinner endTimeSpinner;
+    private JComboBox<String> startTimeSpinner;
+    private JComboBox<String> endTimeSpinner;
     private JComboBox<Course.CourseType> typeComboBox;
     private JTextArea descriptionArea;
     private JCheckBox reminderCheckBox;
@@ -60,16 +61,10 @@ public class CourseDialog extends JDialog {
         String[] days = {"星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"};
         dayOfWeekComboBox = new JComboBox<>(days);
         
-        // 时间选择器
-        SpinnerDateModel startModel = new SpinnerDateModel();
-        startTimeSpinner = new JSpinner(startModel);
-        JSpinner.DateEditor startEditor = new JSpinner.DateEditor(startTimeSpinner, "HH:mm");
-        startTimeSpinner.setEditor(startEditor);
-        
-        SpinnerDateModel endModel = new SpinnerDateModel();
-        endTimeSpinner = new JSpinner(endModel);
-        JSpinner.DateEditor endEditor = new JSpinner.DateEditor(endTimeSpinner, "HH:mm");
-        endTimeSpinner.setEditor(endEditor);
+        // 时间段选择器
+        String[] timeSlotOptions = TimeSlotUtil.getTimeSlotStrings();
+        startTimeSpinner = new JComboBox<>(timeSlotOptions);
+        endTimeSpinner = new JComboBox<>(timeSlotOptions);
         
         // 课程类型选择
         typeComboBox = new JComboBox<>(Course.CourseType.values());
@@ -119,11 +114,11 @@ public class CourseDialog extends JDialog {
         // 星期
         addFormField(mainPanel, "星期:", dayOfWeekComboBox, gbc, 3);
         
-        // 开始时间
-        addFormField(mainPanel, "开始时间:", startTimeSpinner, gbc, 4);
+        // 开始节次
+        addFormField(mainPanel, "开始节次:", startTimeSpinner, gbc, 4);
         
-        // 结束时间
-        addFormField(mainPanel, "结束时间:", endTimeSpinner, gbc, 5);
+        // 结束节次
+        addFormField(mainPanel, "结束节次:", endTimeSpinner, gbc, 5);
         
         // 课程类型
         addFormField(mainPanel, "课程类型:", typeComboBox, gbc, 6);
@@ -231,15 +226,27 @@ public class CourseDialog extends JDialog {
             }
         }
         
-        // 获取时间
+        // 获取时间段
+        String startTimeSlot = (String) startTimeSpinner.getSelectedItem();
+        String endTimeSlot = (String) endTimeSpinner.getSelectedItem();
+        
+        if (startTimeSlot == null || endTimeSlot == null) {
+            JOptionPane.showMessageDialog(this, "请选择上课时间", "提示", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        // 从时间段字符串中提取时间范围
+        String startTimeRange = startTimeSlot.substring(startTimeSlot.indexOf(" ") + 1);
+        String endTimeRange = endTimeSlot.substring(endTimeSlot.indexOf(" ") + 1);
+        
+        // 解析时间
         LocalTime startTime = null;
         LocalTime endTime = null;
         try {
-            Date startDate = (Date) startTimeSpinner.getValue();
-            Date endDate = (Date) endTimeSpinner.getValue();
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            startTime = LocalTime.parse(sdf.format(startDate));
-            endTime = LocalTime.parse(sdf.format(endDate));
+            String[] startParts = startTimeRange.split("-");
+            String[] endParts = endTimeRange.split("-");
+            startTime = LocalTime.parse(startParts[0]);
+            endTime = LocalTime.parse(endParts[1]);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "时间格式错误", "错误", JOptionPane.ERROR_MESSAGE);
             return;
