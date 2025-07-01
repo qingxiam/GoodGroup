@@ -10,6 +10,9 @@ import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.time.format.TextStyle;
 import java.util.Locale;
+import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.text.ParseException;
 
 /**
  * 课程编辑对话框
@@ -228,6 +231,20 @@ public class CourseDialog extends JDialog {
             }
         }
         
+        // 获取时间
+        LocalTime startTime = null;
+        LocalTime endTime = null;
+        try {
+            Date startDate = (Date) startTimeSpinner.getValue();
+            Date endDate = (Date) endTimeSpinner.getValue();
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+            startTime = LocalTime.parse(sdf.format(startDate));
+            endTime = LocalTime.parse(sdf.format(endDate));
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "时间格式错误", "错误", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
         // 创建或更新课程对象
         if (course == null) {
             course = new Course();
@@ -238,8 +255,8 @@ public class CourseDialog extends JDialog {
         course.setTeacher(teacher);
         course.setLocation(location);
         course.setDayOfWeek(dayOfWeek);
-        course.setStartTime(LocalTime.of(8, 0)); // 简化处理
-        course.setEndTime(LocalTime.of(9, 40)); // 简化处理
+        course.setStartTime(startTime);
+        course.setEndTime(endTime);
         course.setType(type);
         course.setDescription(description);
         course.setReminderEnabled(reminderEnabled);
@@ -252,11 +269,16 @@ public class CourseDialog extends JDialog {
         }
         
         // 保存课程
-        boolean success;
-        if (course.getId() == 0) {
-            success = courseController.addCourse(course);
-        } else {
-            success = courseController.updateCourse(course);
+        boolean success = false;
+        String errorMsg = null;
+        try {
+            if (course.getId() == 0) {
+                success = courseController.addCourse(course);
+            } else {
+                success = courseController.updateCourse(course);
+            }
+        } catch (Exception ex) {
+            errorMsg = ex.getMessage();
         }
         
         if (success) {
@@ -264,7 +286,9 @@ public class CourseDialog extends JDialog {
             confirmed = true;
             dispose();
         } else {
-            JOptionPane.showMessageDialog(this, "保存失败", "错误", JOptionPane.ERROR_MESSAGE);
+            String msg = "保存失败";
+            if (errorMsg != null) msg += ("\n" + errorMsg);
+            JOptionPane.showMessageDialog(this, msg, "错误", JOptionPane.ERROR_MESSAGE);
         }
     }
     
