@@ -12,6 +12,7 @@ com\schedule\util\ReminderService$2.class
 com\schedule\util\TimeSlotUtil$TimeSlot.class
 com\schedule\view\CourseManagementPanel$1.class
 com\schedule\view\CourseManagementPanel.class
+com\schedule\view\CourseManagementPanel$2.class
 com\schedule\Main.class
 com\schedule\view\LoginFrame.class
 com\schedule\util\ReminderService.class
@@ -22,4 +23,5 @@ com\schedule\util\ExcelUtil.class
 com\schedule\view\SchedulePanel$1.class
 com\schedule\model\User.class
 com\schedule\view\SchedulePanel.class
+com\schedule\view\SchedulePanel$2.class
 com\schedule\model\Course.class

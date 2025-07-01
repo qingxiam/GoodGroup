@@ -49,9 +49,12 @@ public class CourseDialog extends JDialog {
     }
     
     private void initComponents() {
-        setSize(400, 500);
+        setSize(420, 520);
         setLocationRelativeTo(getOwner());
         setResizable(false);
+        getContentPane().setBackground(new Color(0xF7F7F7));
+        setUndecorated(true);
+        getRootPane().setBorder(BorderFactory.createLineBorder(new Color(0xE0E0E0), 2, true));
         
         nameField = new JTextField(20);
         teacherField = new JTextField(20);
@@ -82,13 +85,31 @@ public class CourseDialog extends JDialog {
         cancelButton = new JButton("取消");
         
         // 设置按钮样式
-        saveButton.setBackground(new Color(46, 139, 87));
+        saveButton.setBackground(new Color(0xE0E0E0));
         saveButton.setForeground(Color.BLACK);
         saveButton.setFocusPainted(false);
+        saveButton.setFont(new Font("PingFang SC", Font.BOLD, 15));
+        saveButton.setBorder(BorderFactory.createLineBorder(new Color(0xB0B0B0), 1, true));
+        saveButton.setPreferredSize(new Dimension(90, 36));
+        saveButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         
-        cancelButton.setBackground(new Color(220, 20, 60));
+        cancelButton.setBackground(new Color(0xE0E0E0));
         cancelButton.setForeground(Color.BLACK);
         cancelButton.setFocusPainted(false);
+        cancelButton.setFont(new Font("PingFang SC", Font.BOLD, 15));
+        cancelButton.setBorder(BorderFactory.createLineBorder(new Color(0xB0B0B0), 1, true));
+        cancelButton.setPreferredSize(new Dimension(90, 36));
+        cancelButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        nameField.setFont(new Font("PingFang SC", Font.PLAIN, 14));
+        teacherField.setFont(new Font("PingFang SC", Font.PLAIN, 14));
+        locationField.setFont(new Font("PingFang SC", Font.PLAIN, 14));
+        dayOfWeekComboBox.setFont(new Font("PingFang SC", Font.PLAIN, 14));
+        startTimeSpinner.setFont(new Font("PingFang SC", Font.PLAIN, 14));
+        endTimeSpinner.setFont(new Font("PingFang SC", Font.PLAIN, 14));
+        typeComboBox.setFont(new Font("PingFang SC", Font.PLAIN, 14));
+        descriptionArea.setFont(new Font("PingFang SC", Font.PLAIN, 14));
+        reminderCheckBox.setFont(new Font("PingFang SC", Font.PLAIN, 14));
     }
     
     private void setupLayout() {
@@ -160,7 +181,8 @@ public class CourseDialog extends JDialog {
     
     private void addFormField(JPanel panel, String labelText, JComponent field, GridBagConstraints gbc, int row) {
         JLabel label = new JLabel(labelText);
-        label.setFont(new Font("微软雅黑", Font.PLAIN, 14));
+        label.setFont(new Font("PingFang SC", Font.PLAIN, 14));
+        label.setForeground(new Color(0x333333));
         
         gbc.gridx = 0;
         gbc.gridy = row;

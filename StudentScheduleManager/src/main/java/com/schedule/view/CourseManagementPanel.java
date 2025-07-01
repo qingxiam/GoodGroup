@@ -6,6 +6,7 @@ import com.schedule.model.User;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
@@ -67,10 +68,47 @@ public class CourseManagementPanel extends JPanel {
             }
         };
         
-        courseTable = new JTable(tableModel);
-        courseTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        courseTable.getTableHeader().setBackground(new Color(240, 240, 240));
-        courseTable.getTableHeader().setFont(new Font("微软雅黑", Font.BOLD, 12));
+        courseTable = new JTable(tableModel) {
+            @Override
+            public Component prepareRenderer(javax.swing.table.TableCellRenderer renderer, int row, int column) {
+                Component c = super.prepareRenderer(renderer, row, column);
+                if (column == 7) { // 类型列
+                    Object value = getValueAt(row, column);
+                    if (value != null) {
+                        String typeName = value.toString();
+                        Course.CourseType type = null;
+                        if (typeName.contains("必修")) type = Course.CourseType.REQUIRED;
+                        else if (typeName.contains("选修")) type = Course.CourseType.ELECTIVE;
+                        else if (typeName.contains("实验")) type = Course.CourseType.PRACTICAL;
+                        else if (typeName.contains("研讨")) type = Course.CourseType.SEMINAR;
+                        if (type != null) {
+                            c.setBackground(type.getMacBgColor());
+                        } else {
+                            c.setBackground(Color.WHITE);
+                        }
+                    } else {
+                        c.setBackground(Color.WHITE);
+                    }
+                } else {
+                    c.setBackground(Color.WHITE);
+                }
+                c.setFont(new Font("PingFang SC", Font.PLAIN, 14));
+                if (isCellSelected(row, column)) {
+                    c.setBackground(new Color(0xD0E3FF));
+                }
+                return c;
+            }
+        };
+        courseTable.setRowHeight(36);
+        courseTable.setShowGrid(false);
+        courseTable.setIntercellSpacing(new Dimension(0, 0));
+        courseTable.setSelectionBackground(new Color(0xD0E3FF));
+        courseTable.setSelectionForeground(Color.BLACK);
+        courseTable.setFont(new Font("PingFang SC", Font.PLAIN, 14));
+        courseTable.getTableHeader().setBackground(new Color(0xF7F7F7));
+        courseTable.getTableHeader().setFont(new Font("PingFang SC", Font.BOLD, 15));
+        courseTable.getTableHeader().setBorder(BorderFactory.createEmptyBorder(8, 0, 8, 0));
+        courseTable.setBorder(BorderFactory.createLineBorder(new Color(0xE0E0E0), 1, true));
     }
     
     private void setupLayout() {

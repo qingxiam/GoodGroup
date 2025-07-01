@@ -112,7 +112,7 @@ public class DatabaseUtil {
                 String insertCourseSql = "INSERT INTO courses (user_id, name, teacher, location, day_of_week, start_time, end_time, type, description, reminder_enabled) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 try (PreparedStatement pstmt = conn.prepareStatement(insertCourseSql)) {
                     // 以截图为准，以下为示例，您可根据实际补充/调整
-                    // 星期一 第2节
+                    // 星期一 第2节（必修）
                     pstmt.setInt(1, 1);
                     pstmt.setString(2, "计算机应用基础(03)");
                     pstmt.setString(3, "李慧琪");
@@ -124,7 +124,7 @@ public class DatabaseUtil {
                     pstmt.setString(9, "6-9周");
                     pstmt.setBoolean(10, true);
                     pstmt.addBatch();
-                    // 星期一 第3节
+                    // 星期一 第3节（选修）
                     pstmt.setInt(1, 1);
                     pstmt.setString(2, "微积分V-1(04)");
                     pstmt.setString(3, "张文");
@@ -132,11 +132,11 @@ public class DatabaseUtil {
                     pstmt.setString(5, "MONDAY");
                     pstmt.setString(6, "10:10");
                     pstmt.setString(7, "10:55");
-                    pstmt.setString(8, "REQUIRED");
+                    pstmt.setString(8, "ELECTIVE");
                     pstmt.setString(9, "4-16周");
                     pstmt.setBoolean(10, true);
                     pstmt.addBatch();
-                    // 星期一 第5节
+                    // 星期一 第5节（实验）
                     pstmt.setInt(1, 1);
                     pstmt.setString(2, "管理学原理B(04)");
                     pstmt.setString(3, "许雯翔");
@@ -144,11 +144,11 @@ public class DatabaseUtil {
                     pstmt.setString(5, "MONDAY");
                     pstmt.setString(6, "14:30");
                     pstmt.setString(7, "15:15");
-                    pstmt.setString(8, "REQUIRED");
+                    pstmt.setString(8, "PRACTICAL");
                     pstmt.setString(9, "4-16周");
                     pstmt.setBoolean(10, true);
                     pstmt.addBatch();
-                    // 星期一 第7节
+                    // 星期一 第7节（研讨）
                     pstmt.setInt(1, 1);
                     pstmt.setString(2, "形势与政策（1）(38)");
                     pstmt.setString(3, "赵忍杰,郑楚桥,吴荣梅,梅超杰");
@@ -156,7 +156,7 @@ public class DatabaseUtil {
                     pstmt.setString(5, "MONDAY");
                     pstmt.setString(6, "16:40");
                     pstmt.setString(7, "17:25");
-                    pstmt.setString(8, "REQUIRED");
+                    pstmt.setString(8, "SEMINAR");
                     pstmt.setString(9, "9-15单周");
                     pstmt.setBoolean(10, true);
                     pstmt.addBatch();
