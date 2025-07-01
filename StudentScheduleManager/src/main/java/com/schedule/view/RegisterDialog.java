@@ -44,11 +44,11 @@ public class RegisterDialog extends JDialog {
         
         // 设置按钮样式
         registerButton.setBackground(new Color(46, 139, 87));
-        registerButton.setForeground(Color.WHITE);
+        registerButton.setForeground(Color.BLACK);
         registerButton.setFocusPainted(false);
         
         cancelButton.setBackground(new Color(220, 20, 60));
-        cancelButton.setForeground(Color.WHITE);
+        cancelButton.setForeground(Color.BLACK);
         cancelButton.setFocusPainted(false);
     }
     

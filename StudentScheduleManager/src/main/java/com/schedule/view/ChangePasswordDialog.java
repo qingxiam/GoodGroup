@@ -41,11 +41,11 @@ public class ChangePasswordDialog extends JDialog {
         
         // 设置按钮样式
         confirmButton.setBackground(new Color(46, 139, 87));
-        confirmButton.setForeground(Color.WHITE);
+        confirmButton.setForeground(Color.BLACK);
         confirmButton.setFocusPainted(false);
         
         cancelButton.setBackground(new Color(220, 20, 60));
-        cancelButton.setForeground(Color.WHITE);
+        cancelButton.setForeground(Color.BLACK);
         cancelButton.setFocusPainted(false);
     }
     

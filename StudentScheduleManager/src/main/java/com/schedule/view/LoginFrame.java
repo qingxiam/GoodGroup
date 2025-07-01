@@ -37,11 +37,11 @@ public class LoginFrame extends JFrame {
         
         // 设置按钮样式
         loginButton.setBackground(new Color(70, 130, 180));
-        loginButton.setForeground(Color.WHITE);
+        loginButton.setForeground(Color.BLACK);
         loginButton.setFocusPainted(false);
         
         registerButton.setBackground(new Color(46, 139, 87));
-        registerButton.setForeground(Color.WHITE);
+        registerButton.setForeground(Color.BLACK);
         registerButton.setFocusPainted(false);
     }
     

@@ -43,19 +43,19 @@ public class CourseManagementPanel extends JPanel {
         
         // 设置按钮样式
         addButton.setBackground(new Color(46, 139, 87));
-        addButton.setForeground(Color.WHITE);
+        addButton.setForeground(Color.BLACK);
         addButton.setFocusPainted(false);
         
         editButton.setBackground(new Color(70, 130, 180));
-        editButton.setForeground(Color.WHITE);
+        editButton.setForeground(Color.BLACK);
         editButton.setFocusPainted(false);
         
         deleteButton.setBackground(new Color(220, 20, 60));
-        deleteButton.setForeground(Color.WHITE);
+        deleteButton.setForeground(Color.BLACK);
         deleteButton.setFocusPainted(false);
         
         importButton.setBackground(new Color(255, 140, 0));
-        importButton.setForeground(Color.WHITE);
+        importButton.setForeground(Color.BLACK);
         importButton.setFocusPainted(false);
         
         // 创建表格模型

@@ -40,11 +40,11 @@ public class SchedulePanel extends JPanel {
         
         // 设置按钮样式
         refreshButton.setBackground(new Color(70, 130, 180));
-        refreshButton.setForeground(Color.WHITE);
+        refreshButton.setForeground(Color.BLACK);
         refreshButton.setFocusPainted(false);
         
         exportButton.setBackground(new Color(46, 139, 87));
-        exportButton.setForeground(Color.WHITE);
+        exportButton.setForeground(Color.BLACK);
         exportButton.setFocusPainted(false);
         
         // 创建表格模型
