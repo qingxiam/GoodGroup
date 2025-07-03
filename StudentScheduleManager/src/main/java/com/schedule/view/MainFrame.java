@@ -16,6 +16,7 @@ public class MainFrame extends JFrame {
     private CourseManagementPanel courseManagementPanel;
     private UserProfilePanel userProfilePanel;
     private ReminderService reminderService;
+    private int userId;
     
     public MainFrame(User user) {
         this.currentUser = user;

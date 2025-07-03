@@ -18,6 +18,7 @@ public class Course {
     private CourseType type;
     private String description;
     private boolean reminderEnabled;
+
     
     public enum CourseType {
         REQUIRED("必修", java.awt.Color.RED),
@@ -171,4 +172,4 @@ public class Course {
                 ", type=" + type +
                 '}';
     }
-} 
+}
