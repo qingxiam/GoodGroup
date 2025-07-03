@@ -15,8 +15,14 @@
     </properties>
 
     <dependencies>
-        <!-- 依赖配置（如有需要） -->
-        <!-- 示例：添加 JUnit 测试依赖 -->
+        <!-- SQLite JDBC 驱动 -->
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.36.0.3</version>
+        </dependency>
+        
+        <!-- JUnit 测试依赖 -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>

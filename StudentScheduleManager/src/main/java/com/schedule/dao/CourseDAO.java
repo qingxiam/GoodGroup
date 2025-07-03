@@ -45,6 +45,7 @@ public class CourseDAO {
             
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new RuntimeException("数据库错误: " + e.getMessage(), e);
         }
         
         return false;

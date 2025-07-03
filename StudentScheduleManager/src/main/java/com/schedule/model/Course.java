@@ -40,6 +40,16 @@ public class Course {
         public java.awt.Color getColor() {
             return color;
         }
+        
+        public java.awt.Color getMacBgColor() {
+            switch (this) {
+                case REQUIRED: return new java.awt.Color(0xFFCDD2);
+                case ELECTIVE: return new java.awt.Color(0xBBDEFB);
+                case PRACTICAL: return new java.awt.Color(0xC8E6C9);
+                case SEMINAR: return new java.awt.Color(0xFFE0B2);
+                default: return java.awt.Color.WHITE;
+            }
+        }
     }
     
     public Course() {}

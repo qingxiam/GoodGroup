@@ -1,25 +1,22 @@
 @echo off
-chcp 65001 >nul
+REM 设置变量
+set SRC=src\main\java
+set BIN=bin
+set LIB=lib\sqlite-jdbc-3.36.0.3.jar
 
-echo === 学生个人课表管理系统 ===
-echo 正在编译项目...
+REM 编译所有java文件
+echo 正在编译...
+javac -encoding utf-8 -cp "%LIB%" -d %BIN% %SRC%\com\schedule\*.java %SRC%\com\schedule\model\*.java %SRC%\com\schedule\util\*.java %SRC%\com\schedule\dao\*.java %SRC%\com\schedule\controller\*.java %SRC%\com\schedule\view\*.java
 
-REM 创建输出目录
-if not exist bin mkdir bin
-
-REM 编译所有Java文件
-javac -d bin -cp "src\main\java" src\main\java\com\schedule\*.java src\main\java\com\schedule\*\*.java
-
-if %errorlevel% equ 0 (
-    echo 编译成功！
-    echo 正在启动应用程序...
-    
-    REM 运行程序
-    java -cp bin com.schedule.Main
-) else (
-    echo 编译失败！请检查错误信息。
+IF %ERRORLEVEL% NEQ 0 (
+    echo 编译失败!
     pause
-    exit /b 1
+    exit /b %ERRORLEVEL%
 )
 
-pause 
+REM 运行主程序
+echo 编译成功，正在运行...
+cd %BIN%
+java --enable-native-access=ALL-UNNAMED -cp ".;..\%LIB%" com.schedule.Main
+cd ..
+pause
