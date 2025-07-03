@@ -5,8 +5,12 @@
 ## 环境
 
 Windows
+
 jdk-24
+
 apache-maven-3.9.10
+
+sqlite-jdbc-3.36.0.3.jar
 
 ## 联系
 
