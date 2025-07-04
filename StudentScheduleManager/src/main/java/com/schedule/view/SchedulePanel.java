@@ -190,10 +190,16 @@ public class SchedulePanel extends JPanel {
     }
 
     private Course getCourseForDayAndTime(List<Course> courses, DayOfWeek day, String timeSlot) {
+        // 解析格子的时间段
         String timeRange = timeSlot.substring(timeSlot.indexOf(" ") + 1);
+        String[] times = timeRange.split("-");
+        java.time.LocalTime slotStart = java.time.LocalTime.parse(times[0]);
+        java.time.LocalTime slotEnd = java.time.LocalTime.parse(times[1]);
+        // 查找覆盖该时间段的课程
         return courses.stream()
                 .filter(c -> c.getDayOfWeek() == day &&
-                        (c.getStartTime() + "-" + c.getEndTime()).equals(timeRange))
+                        !c.getStartTime().isAfter(slotStart) &&
+                        !c.getEndTime().isBefore(slotEnd))
                 .findFirst()
                 .orElse(null);
     }
