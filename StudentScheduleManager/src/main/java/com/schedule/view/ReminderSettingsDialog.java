@@ -43,9 +43,9 @@ public class ReminderSettingsDialog extends JDialog {
     }
     
     private void initComponents() {
-        smtpHostField = new JTextField("smtp.qq.com", 20);
-        smtpPortField = new JTextField("587", 10);
-        emailField = new JTextField(20);
+        smtpHostField = new JTextField(20);
+        smtpPortField = new JTextField(10);
+        emailField = new JTextField("goodgroup@yeah.net", 20);
         passwordField = new JPasswordField(20);
         emailEnabledCheckBox = new JCheckBox("启用邮件提醒", true);
         messageEnabledCheckBox = new JCheckBox("启用站内消息提醒", true);
@@ -137,9 +137,12 @@ public class ReminderSettingsDialog extends JDialog {
     }
     
     private void loadCurrentSettings() {
-        // 这里可以从配置文件或数据库加载当前设置
-        // 暂时使用默认值
-        emailField.setText(currentUser.getEmail());
+        // 优先填充yeah.net内置信息
+        smtpHostField.setText("smtp.yeah.net");
+        smtpPortField.setText("25");
+        emailField.setText("goodgroup@yeah.net");
+        passwordField.setText("MRRVEq9BFeNJEuLT");
+        // 不再根据用户邮箱覆盖，默认goodgroup@yeah.net，可手动修改
     }
     
     private void testEmail() {
