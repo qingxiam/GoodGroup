@@ -22,10 +22,14 @@ public class ReminderService {
     private CourseController courseController;
     private User currentUser;
     private boolean isRunning = false;
+    private EmailService emailService;
+    private MessageService messageService;
     
     private ReminderService() {
         timer = new Timer(true);
         courseController = new CourseController();
+        emailService = EmailService.getInstance();
+        messageService = MessageService.getInstance();
     }
     
     public static ReminderService getInstance() {
@@ -96,6 +100,10 @@ public class ReminderService {
                 // 如果课程在30分钟内开始，显示提醒
                 if (minutesUntilCourse >= 0 && minutesUntilCourse <= 30) {
                     showReminder(course, minutesUntilCourse);
+                    // 发送邮件提醒
+                    emailService.sendCourseReminder(currentUser, course, minutesUntilCourse);
+                    // 发送站内消息
+                    messageService.sendCourseReminderMessage(currentUser, course, minutesUntilCourse);
                 }
             }
         }

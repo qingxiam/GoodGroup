@@ -2,6 +2,9 @@ package com.schedule.view;
 
 import com.schedule.controller.CourseController;
 import com.schedule.model.Course;
+import com.schedule.util.DatabaseUtil; // 原有导入
+import com.schedule.util.ExcelUtil;    // 添加这行导入ExcelUtil类
+import com.schedule.util.ReminderService; // 原有导入
 import com.schedule.model.User;
 
 import javax.swing.*;
@@ -211,8 +214,45 @@ public class CourseManagementPanel extends JPanel {
             }
         }
     }
-    
+
     private void importFromExcel() {
-        JOptionPane.showMessageDialog(this, "Excel导入功能待实现", "提示", JOptionPane.INFORMATION_MESSAGE);
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Excel Files", "xlsx", "xls"));
+        fileChooser.setDialogTitle("选择课程导入文件");
+
+        int result = fileChooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            String filePath = fileChooser.getSelectedFile().getAbsolutePath();
+
+            // 导入课程
+            List<Course> courses = ExcelUtil.importCoursesFromExcel(filePath, currentUser);
+
+            if (courses.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "未找到有效课程数据！", "导入失败", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // 批量添加课程
+            String validationError = null;
+            for (Course course : courses) {
+                validationError = courseController.validateCourse(course);
+                if (validationError != null) {
+                    break;
+                }
+            }
+
+            if (validationError != null) {
+                JOptionPane.showMessageDialog(this, "导入数据验证失败：" + validationError, "错误", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            boolean success = courseController.batchAddCourses(courses);
+            if (success) {
+                JOptionPane.showMessageDialog(this, "成功导入 " + courses.size() + " 门课程！", "导入成功", JOptionPane.INFORMATION_MESSAGE);
+                loadCourses();  // 刷新课程列表
+            } else {
+                JOptionPane.showMessageDialog(this, "课程导入失败！", "导入失败", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 } 
