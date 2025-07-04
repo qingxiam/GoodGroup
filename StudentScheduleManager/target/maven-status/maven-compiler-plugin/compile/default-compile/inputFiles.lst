@@ -2,6 +2,7 @@ E:\XMU\SE\Code\GoodGroup\StudentScheduleManager\src\main\java\com\schedule\view\
 E:\XMU\SE\Code\GoodGroup\StudentScheduleManager\src\main\java\com\schedule\dao\CourseDAO.java
 E:\XMU\SE\Code\GoodGroup\StudentScheduleManager\src\main\java\com\schedule\model\User.java
 E:\XMU\SE\Code\GoodGroup\StudentScheduleManager\src\main\java\com\schedule\model\Course.java
+E:\XMU\SE\Code\GoodGroup\StudentScheduleManager\src\main\java\com\schedule\view\ReminderSettingsDialog.java
 E:\XMU\SE\Code\GoodGroup\StudentScheduleManager\src\main\java\com\schedule\Main.java
 E:\XMU\SE\Code\GoodGroup\StudentScheduleManager\src\main\java\com\schedule\view\ChangePasswordDialog.java
 E:\XMU\SE\Code\GoodGroup\StudentScheduleManager\src\main\java\com\schedule\view\RegisterDialog.java
@@ -11,8 +12,12 @@ E:\XMU\SE\Code\GoodGroup\StudentScheduleManager\src\main\java\com\schedule\view\
 E:\XMU\SE\Code\GoodGroup\StudentScheduleManager\src\main\java\com\schedule\view\UserProfilePanel.java
 E:\XMU\SE\Code\GoodGroup\StudentScheduleManager\src\main\java\com\schedule\dao\UserDAO.java
 E:\XMU\SE\Code\GoodGroup\StudentScheduleManager\src\main\java\com\schedule\util\ReminderService.java
+E:\XMU\SE\Code\GoodGroup\StudentScheduleManager\src\main\java\com\schedule\util\TimeSlotUtil.java
 E:\XMU\SE\Code\GoodGroup\StudentScheduleManager\src\main\java\com\schedule\view\SchedulePanel.java
 E:\XMU\SE\Code\GoodGroup\StudentScheduleManager\src\main\java\com\schedule\view\LoginFrame.java
 E:\XMU\SE\Code\GoodGroup\StudentScheduleManager\src\main\java\com\schedule\controller\UserController.java
 E:\XMU\SE\Code\GoodGroup\StudentScheduleManager\src\main\java\com\schedule\util\DatabaseUtil.java
+E:\XMU\SE\Code\GoodGroup\StudentScheduleManager\src\main\java\com\schedule\util\MessageService.java
+E:\XMU\SE\Code\GoodGroup\StudentScheduleManager\src\main\java\com\schedule\util\EmailService.java
 E:\XMU\SE\Code\GoodGroup\StudentScheduleManager\src\main\java\com\schedule\util\ExcelUtil.java
+E:\XMU\SE\Code\GoodGroup\StudentScheduleManager\src\main\java\com\schedule\view\MessageCenterPanel.java

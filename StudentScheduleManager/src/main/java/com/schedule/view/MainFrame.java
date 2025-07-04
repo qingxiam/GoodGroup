@@ -2,6 +2,7 @@ package com.schedule.view;
 
 import com.schedule.model.User;
 import com.schedule.util.ReminderService;
+import com.schedule.util.MessageService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,7 +16,9 @@ public class MainFrame extends JFrame {
     private SchedulePanel schedulePanel;
     private CourseManagementPanel courseManagementPanel;
     private UserProfilePanel userProfilePanel;
+    private MessageCenterPanel messageCenterPanel;
     private ReminderService reminderService;
+    private int userId;
     
     public MainFrame(User user) {
         this.currentUser = user;
@@ -37,6 +40,7 @@ public class MainFrame extends JFrame {
         schedulePanel = new SchedulePanel(currentUser);
         courseManagementPanel = new CourseManagementPanel(currentUser);
         userProfilePanel = new UserProfilePanel(currentUser);
+        messageCenterPanel = new MessageCenterPanel(currentUser);
     }
     
     private void setupLayout() {
@@ -46,6 +50,7 @@ public class MainFrame extends JFrame {
         tabbedPane.addTab("课表查看", new ImageIcon(), schedulePanel, "查看和管理课程表");
         tabbedPane.addTab("课程管理", new ImageIcon(), courseManagementPanel, "添加、编辑和删除课程");
         tabbedPane.addTab("个人资料", new ImageIcon(), userProfilePanel, "管理个人信息");
+        tabbedPane.addTab("消息中心", new ImageIcon(), messageCenterPanel, "查看和管理站内消息");
         
         add(tabbedPane, BorderLayout.CENTER);
         
@@ -133,16 +138,42 @@ public class MainFrame extends JFrame {
     }
     
     private void openReminderSettings() {
-        JOptionPane.showMessageDialog(this, "提醒设置功能待实现", "提示", JOptionPane.INFORMATION_MESSAGE);
+        ReminderSettingsDialog dialog = new ReminderSettingsDialog(this, currentUser);
+        dialog.setVisible(true);
     }
     
     private void testReminder() {
-        int result = JOptionPane.showConfirmDialog(this, 
-            "是否要测试提醒功能？这将显示一个示例提醒窗口。", 
-            "测试提醒", JOptionPane.YES_NO_OPTION);
+        String[] options = {"弹窗提醒", "邮件提醒", "站内消息", "全部测试"};
+        int choice = JOptionPane.showOptionDialog(this,
+            "请选择要测试的提醒方式：",
+            "测试提醒功能",
+            JOptionPane.DEFAULT_OPTION,
+            JOptionPane.QUESTION_MESSAGE,
+            null,
+            options,
+            options[3]);
         
-        if (result == JOptionPane.YES_OPTION) {
+        if (choice == 0) {
+            // 弹窗提醒
             reminderService.manualCheck();
+        } else if (choice == 1) {
+            // 邮件提醒
+            ReminderSettingsDialog dialog = new ReminderSettingsDialog(this, currentUser);
+            dialog.setVisible(true);
+        } else if (choice == 2) {
+            // 站内消息
+            MessageService.getInstance().sendTestMessage(currentUser);
+            JOptionPane.showMessageDialog(this,
+                "测试站内消息已发送！请切换到消息中心查看。",
+                "测试成功", JOptionPane.INFORMATION_MESSAGE);
+            tabbedPane.setSelectedIndex(3); // 切换到消息中心
+        } else if (choice == 3) {
+            // 全部测试
+            reminderService.manualCheck();
+            MessageService.getInstance().sendTestMessage(currentUser);
+            JOptionPane.showMessageDialog(this,
+                "已发送弹窗提醒和站内消息！\n如需测试邮件，请使用提醒设置功能。",
+                "测试完成", JOptionPane.INFORMATION_MESSAGE);
         }
     }
     

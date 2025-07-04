@@ -2,10 +2,14 @@ package com.schedule.view;
 
 import com.schedule.controller.CourseController;
 import com.schedule.model.Course;
+import com.schedule.util.DatabaseUtil; // 原有导入
+import com.schedule.util.ExcelUtil;    // 添加这行导入ExcelUtil类
+import com.schedule.util.ReminderService; // 原有导入
 import com.schedule.model.User;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
@@ -43,19 +47,19 @@ public class CourseManagementPanel extends JPanel {
         
         // 设置按钮样式
         addButton.setBackground(new Color(46, 139, 87));
-        addButton.setForeground(Color.WHITE);
+        addButton.setForeground(Color.BLACK);
         addButton.setFocusPainted(false);
         
         editButton.setBackground(new Color(70, 130, 180));
-        editButton.setForeground(Color.WHITE);
+        editButton.setForeground(Color.BLACK);
         editButton.setFocusPainted(false);
         
         deleteButton.setBackground(new Color(220, 20, 60));
-        deleteButton.setForeground(Color.WHITE);
+        deleteButton.setForeground(Color.BLACK);
         deleteButton.setFocusPainted(false);
         
         importButton.setBackground(new Color(255, 140, 0));
-        importButton.setForeground(Color.WHITE);
+        importButton.setForeground(Color.BLACK);
         importButton.setFocusPainted(false);
         
         // 创建表格模型
@@ -67,10 +71,47 @@ public class CourseManagementPanel extends JPanel {
             }
         };
         
-        courseTable = new JTable(tableModel);
-        courseTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        courseTable.getTableHeader().setBackground(new Color(240, 240, 240));
-        courseTable.getTableHeader().setFont(new Font("微软雅黑", Font.BOLD, 12));
+        courseTable = new JTable(tableModel) {
+            @Override
+            public Component prepareRenderer(javax.swing.table.TableCellRenderer renderer, int row, int column) {
+                Component c = super.prepareRenderer(renderer, row, column);
+                if (column == 7) { // 类型列
+                    Object value = getValueAt(row, column);
+                    if (value != null) {
+                        String typeName = value.toString();
+                        Course.CourseType type = null;
+                        if (typeName.contains("必修")) type = Course.CourseType.REQUIRED;
+                        else if (typeName.contains("选修")) type = Course.CourseType.ELECTIVE;
+                        else if (typeName.contains("实验")) type = Course.CourseType.PRACTICAL;
+                        else if (typeName.contains("研讨")) type = Course.CourseType.SEMINAR;
+                        if (type != null) {
+                            c.setBackground(type.getMacBgColor());
+                        } else {
+                            c.setBackground(Color.WHITE);
+                        }
+                    } else {
+                        c.setBackground(Color.WHITE);
+                    }
+                } else {
+                    c.setBackground(Color.WHITE);
+                }
+                c.setFont(new Font("PingFang SC", Font.PLAIN, 14));
+                if (isCellSelected(row, column)) {
+                    c.setBackground(new Color(0xD0E3FF));
+                }
+                return c;
+            }
+        };
+        courseTable.setRowHeight(36);
+        courseTable.setShowGrid(false);
+        courseTable.setIntercellSpacing(new Dimension(0, 0));
+        courseTable.setSelectionBackground(new Color(0xD0E3FF));
+        courseTable.setSelectionForeground(Color.BLACK);
+        courseTable.setFont(new Font("PingFang SC", Font.PLAIN, 14));
+        courseTable.getTableHeader().setBackground(new Color(0xF7F7F7));
+        courseTable.getTableHeader().setFont(new Font("PingFang SC", Font.BOLD, 15));
+        courseTable.getTableHeader().setBorder(BorderFactory.createEmptyBorder(8, 0, 8, 0));
+        courseTable.setBorder(BorderFactory.createLineBorder(new Color(0xE0E0E0), 1, true));
     }
     
     private void setupLayout() {
@@ -173,8 +214,45 @@ public class CourseManagementPanel extends JPanel {
             }
         }
     }
-    
+
     private void importFromExcel() {
-        JOptionPane.showMessageDialog(this, "Excel导入功能待实现", "提示", JOptionPane.INFORMATION_MESSAGE);
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Excel Files", "xlsx", "xls"));
+        fileChooser.setDialogTitle("选择课程导入文件");
+
+        int result = fileChooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            String filePath = fileChooser.getSelectedFile().getAbsolutePath();
+
+            // 导入课程
+            List<Course> courses = ExcelUtil.importCoursesFromExcel(filePath, currentUser);
+
+            if (courses.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "未找到有效课程数据！", "导入失败", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // 批量添加课程
+            String validationError = null;
+            for (Course course : courses) {
+                validationError = courseController.validateCourse(course);
+                if (validationError != null) {
+                    break;
+                }
+            }
+
+            if (validationError != null) {
+                JOptionPane.showMessageDialog(this, "导入数据验证失败：" + validationError, "错误", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            boolean success = courseController.batchAddCourses(courses);
+            if (success) {
+                JOptionPane.showMessageDialog(this, "成功导入 " + courses.size() + " 门课程！", "导入成功", JOptionPane.INFORMATION_MESSAGE);
+                loadCourses();  // 刷新课程列表
+            } else {
+                JOptionPane.showMessageDialog(this, "课程导入失败！", "导入失败", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 } 

@@ -43,11 +43,11 @@ public class UserProfilePanel extends JPanel {
         
         // 设置按钮样式
         saveButton.setBackground(new Color(46, 139, 87));
-        saveButton.setForeground(Color.WHITE);
+        saveButton.setForeground(Color.BLACK);
         saveButton.setFocusPainted(false);
         
         changePasswordButton.setBackground(new Color(70, 130, 180));
-        changePasswordButton.setForeground(Color.WHITE);
+        changePasswordButton.setForeground(Color.BLACK);
         changePasswordButton.setFocusPainted(false);
     }
     
