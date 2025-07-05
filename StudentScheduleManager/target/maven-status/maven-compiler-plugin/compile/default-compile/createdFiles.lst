@@ -2,8 +2,10 @@ com\schedule\util\ExcelUtil$1.class
 com\schedule\view\MainFrame.class
 com\schedule\dao\UserDAO.class
 com\schedule\util\EmailService$1.class
+com\schedule\view\SchedulePanel$7.class
 com\schedule\view\CourseDialog.class
 com\schedule\controller\UserController.class
+com\schedule\view\SchedulePanel$5.class
 com\schedule\controller\CourseController.class
 com\schedule\view\ReminderSettingsDialog$1.class
 com\schedule\util\EmailService.class
@@ -17,12 +19,16 @@ com\schedule\util\ReminderService$2.class
 com\schedule\util\TimeSlotUtil$TimeSlot.class
 com\schedule\view\CourseManagementPanel$1.class
 com\schedule\view\CourseManagementPanel.class
+com\schedule\view\SchedulePanel$8.class
 com\schedule\util\MessageService$MessageType.class
+com\schedule\view\SchedulePanel$3.class
 com\schedule\view\CourseManagementPanel$2.class
+com\schedule\view\MainFrame$1.class
 com\schedule\Main.class
 com\schedule\view\LoginFrame.class
 com\schedule\util\ReminderService.class
 com\schedule\view\ReminderSettingsDialog.class
+com\schedule\view\SchedulePanel$6.class
 com\schedule\model\Course$CourseType.class
 com\schedule\util\ReminderService$1.class
 com\schedule\view\MessageCenterPanel.class
@@ -31,7 +37,9 @@ com\schedule\util\TimeSlotUtil.class
 com\schedule\util\ExcelUtil.class
 com\schedule\view\SchedulePanel$1.class
 com\schedule\view\MessageCenterPanel$1.class
+com\schedule\view\SchedulePanel$9.class
 com\schedule\model\User.class
+com\schedule\view\SchedulePanel$4.class
 com\schedule\view\SchedulePanel.class
 com\schedule\view\SchedulePanel$2.class
 com\schedule\model\Course.class
