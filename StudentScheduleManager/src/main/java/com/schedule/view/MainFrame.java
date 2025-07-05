@@ -6,9 +6,13 @@ import com.schedule.util.MessageService;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 
 /**
- * 主界面
+ * 主窗口 - 孤独摇滚风格
  */
 public class MainFrame extends JFrame {
     private User currentUser;
@@ -18,24 +22,50 @@ public class MainFrame extends JFrame {
     private UserProfilePanel userProfilePanel;
     private MessageCenterPanel messageCenterPanel;
     private ReminderService reminderService;
-    private int userId;
+    private MessageService messageService;
     
+    // 孤独摇滚主题相关
+    private boolean bocchiThemeEnabled = false;
+    private BufferedImage backgroundImage;
+    private Color bocchiAccentColor = new Color(255, 105, 180); // 粉色
+    private Color bocchiSecondaryColor = new Color(138, 43, 226); // 紫色
+    private Color bocchiDarkColor = new Color(45, 45, 45); // 深色
+
     public MainFrame(User user) {
         this.currentUser = user;
         this.reminderService = ReminderService.getInstance();
+        this.messageService = MessageService.getInstance();
+        
+        loadBocchiResources();
         initComponents();
         setupLayout();
         setupMenuBar();
-        startReminderService();
+        setupListeners();
+        
+        // 启动提醒服务
+        reminderService.startReminderService(currentUser);
+        
+        setTitle("学生课程管理系统 - " + currentUser.getUsername());
+        setSize(1200, 800);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
+    /**
+     * 加载孤独摇滚资源
+     */
+    private void loadBocchiResources() {
+        try {
+            File bgFile = new File("resources/backgrounds/bocchi_main_bg.jpg");
+            if (bgFile.exists()) {
+                backgroundImage = ImageIO.read(bgFile);
+            }
+        } catch (IOException e) {
+            System.out.println("无法加载主窗口背景图片: " + e.getMessage());
+        }
+    }
+
     private void initComponents() {
-        setTitle("学生个人课表管理系统 - " + currentUser.getName());
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1000, 700);
-        setLocationRelativeTo(null);
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
-        
         tabbedPane = new JTabbedPane();
         schedulePanel = new SchedulePanel(currentUser);
         courseManagementPanel = new CourseManagementPanel(currentUser);
@@ -43,162 +73,174 @@ public class MainFrame extends JFrame {
         messageCenterPanel = new MessageCenterPanel(currentUser);
     }
     
+
+
     private void setupLayout() {
         setLayout(new BorderLayout());
         
-        // 添加选项卡
-        tabbedPane.addTab("课表查看", new ImageIcon(), schedulePanel, "查看和管理课程表");
-        tabbedPane.addTab("课程管理", new ImageIcon(), courseManagementPanel, "添加、编辑和删除课程");
-        tabbedPane.addTab("个人资料", new ImageIcon(), userProfilePanel, "管理个人信息");
-        tabbedPane.addTab("消息中心", new ImageIcon(), messageCenterPanel, "查看和管理站内消息");
+        // 设置背景
+        if (bocchiThemeEnabled && backgroundImage != null) {
+            setContentPane(new JPanel() {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    Graphics2D g2d = (Graphics2D) g.create();
+                    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    g2d.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), null);
+                    g2d.dispose();
+                }
+            });
+        }
+
+        // 添加标签页
+        tabbedPane.addTab("课表", new ImageIcon("resources/icons/bocchi_schedule.png"), schedulePanel);
+        tabbedPane.addTab("课程管理", new ImageIcon("resources/icons/bocchi_course.png"), courseManagementPanel);
+        tabbedPane.addTab("个人资料", new ImageIcon("resources/icons/bocchi_profile.png"), userProfilePanel);
+        tabbedPane.addTab("消息中心", new ImageIcon("resources/icons/bocchi_message.png"), messageCenterPanel);
         
+        // 设置标签页字体
+        tabbedPane.setFont(new Font("微软雅黑", Font.PLAIN, 12));
+        
+        // 设置标签页样式
+        if (bocchiThemeEnabled) {
+            tabbedPane.setOpaque(false);
+            tabbedPane.setBackground(new Color(255, 255, 255, 180));
+            tabbedPane.setForeground(bocchiDarkColor);
+        }
+
         add(tabbedPane, BorderLayout.CENTER);
-        
-        // 添加状态栏
-        JPanel statusBar = new JPanel(new BorderLayout());
-        statusBar.setBorder(BorderFactory.createEtchedBorder());
-        
-        JLabel statusLabel = new JLabel(" 欢迎使用学生个人课表管理系统！当前用户：" + currentUser.getName());
-        statusLabel.setFont(new Font("微软雅黑", Font.PLAIN, 12));
-        statusBar.add(statusLabel, BorderLayout.WEST);
-        
-        // 添加提醒状态指示器
-        JLabel reminderLabel = new JLabel(" 提醒服务：运行中 ");
-        reminderLabel.setFont(new Font("微软雅黑", Font.PLAIN, 12));
-        reminderLabel.setForeground(new Color(46, 139, 87));
-        statusBar.add(reminderLabel, BorderLayout.EAST);
-        
-        add(statusBar, BorderLayout.SOUTH);
     }
-    
+
     private void setupMenuBar() {
         JMenuBar menuBar = new JMenuBar();
         
+        if (bocchiThemeEnabled) {
+            menuBar.setBackground(new Color(45, 45, 45, 200));
+            menuBar.setForeground(Color.WHITE);
+        }
+
         // 文件菜单
         JMenu fileMenu = new JMenu("文件");
+        fileMenu.setFont(new Font("微软雅黑", Font.PLAIN, 12));
         JMenuItem importItem = new JMenuItem("导入Excel");
-        JMenuItem exportItem = new JMenuItem("导出课表");
+        importItem.setFont(new Font("微软雅黑", Font.PLAIN, 12));
+        JMenuItem exportItem = new JMenuItem("导出Excel");
+        exportItem.setFont(new Font("微软雅黑", Font.PLAIN, 12));
         JMenuItem exitItem = new JMenuItem("退出");
+        exitItem.setFont(new Font("微软雅黑", Font.PLAIN, 12));
         
         importItem.addActionListener(e -> importFromExcel());
-        exportItem.addActionListener(e -> exportSchedule());
-        exitItem.addActionListener(e -> exitApplication());
+        exportItem.addActionListener(e -> exportToExcel());
+        exitItem.addActionListener(e -> System.exit(0));
         
         fileMenu.add(importItem);
         fileMenu.add(exportItem);
         fileMenu.addSeparator();
         fileMenu.add(exitItem);
-        
+
         // 工具菜单
         JMenu toolsMenu = new JMenu("工具");
-        JMenuItem settingsItem = new JMenuItem("设置");
+        toolsMenu.setFont(new Font("微软雅黑", Font.PLAIN, 12));
         JMenuItem reminderItem = new JMenuItem("提醒设置");
-        JMenuItem testReminderItem = new JMenuItem("测试提醒");
+        reminderItem.setFont(new Font("微软雅黑", Font.PLAIN, 12));
+        JMenuItem themeItem = new JMenuItem("主题设置");
+        themeItem.setFont(new Font("微软雅黑", Font.PLAIN, 12));
         
-        settingsItem.addActionListener(e -> openSettings());
         reminderItem.addActionListener(e -> openReminderSettings());
-        testReminderItem.addActionListener(e -> testReminder());
+        themeItem.addActionListener(e -> openThemeSettings());
         
-        toolsMenu.add(settingsItem);
         toolsMenu.add(reminderItem);
-        toolsMenu.addSeparator();
-        toolsMenu.add(testReminderItem);
-        
+        toolsMenu.add(themeItem);
+
         // 帮助菜单
         JMenu helpMenu = new JMenu("帮助");
+        helpMenu.setFont(new Font("微软雅黑", Font.PLAIN, 12));
         JMenuItem aboutItem = new JMenuItem("关于");
+        aboutItem.setFont(new Font("微软雅黑", Font.PLAIN, 12));
+        JMenuItem helpItem = new JMenuItem("使用帮助");
+        helpItem.setFont(new Font("微软雅黑", Font.PLAIN, 12));
         
-        aboutItem.addActionListener(e -> showAbout());
+        aboutItem.addActionListener(e -> showAboutDialog());
+        helpItem.addActionListener(e -> showHelpDialog());
         
+        helpMenu.add(helpItem);
+        helpMenu.addSeparator();
         helpMenu.add(aboutItem);
-        
+
         menuBar.add(fileMenu);
         menuBar.add(toolsMenu);
         menuBar.add(helpMenu);
         
         setJMenuBar(menuBar);
     }
-    
-    private void startReminderService() {
-        reminderService.startReminderService(currentUser);
+
+    private void setupListeners() {
+        // 主题切换功能已移至课表面板
     }
-    
+
     private void importFromExcel() {
         JOptionPane.showMessageDialog(this, "Excel导入功能将在课程管理面板中实现", "提示", JOptionPane.INFORMATION_MESSAGE);
         tabbedPane.setSelectedIndex(1); // 切换到课程管理选项卡
     }
-    
-    private void exportSchedule() {
+
+    private void exportToExcel() {
         JOptionPane.showMessageDialog(this, "导出功能将在课表查看面板中实现", "提示", JOptionPane.INFORMATION_MESSAGE);
         tabbedPane.setSelectedIndex(0); // 切换到课表查看选项卡
     }
-    
-    private void openSettings() {
-        JOptionPane.showMessageDialog(this, "设置功能待实现", "提示", JOptionPane.INFORMATION_MESSAGE);
-    }
-    
+
     private void openReminderSettings() {
         ReminderSettingsDialog dialog = new ReminderSettingsDialog(this, currentUser);
         dialog.setVisible(true);
     }
-    
-    private void testReminder() {
-        String[] options = {"弹窗提醒", "邮件提醒", "站内消息", "全部测试"};
-        int choice = JOptionPane.showOptionDialog(this,
-            "请选择要测试的提醒方式：",
-            "测试提醒功能",
-            JOptionPane.DEFAULT_OPTION,
-            JOptionPane.QUESTION_MESSAGE,
-            null,
-            options,
-            options[3]);
-        
-        if (choice == 0) {
-            // 弹窗提醒
-            reminderService.manualCheck();
-        } else if (choice == 1) {
-            // 邮件提醒
-            ReminderSettingsDialog dialog = new ReminderSettingsDialog(this, currentUser);
-            dialog.setVisible(true);
-        } else if (choice == 2) {
-            // 站内消息
-            MessageService.getInstance().sendTestMessage(currentUser);
-            JOptionPane.showMessageDialog(this,
-                "测试站内消息已发送！请切换到消息中心查看。",
-                "测试成功", JOptionPane.INFORMATION_MESSAGE);
-            tabbedPane.setSelectedIndex(3); // 切换到消息中心
-        } else if (choice == 3) {
-            // 全部测试
-            reminderService.manualCheck();
-            MessageService.getInstance().sendTestMessage(currentUser);
-            JOptionPane.showMessageDialog(this,
-                "已发送弹窗提醒和站内消息！\n如需测试邮件，请使用提醒设置功能。",
-                "测试完成", JOptionPane.INFORMATION_MESSAGE);
-        }
-    }
-    
-    private void exitApplication() {
-        int result = JOptionPane.showConfirmDialog(this, 
-            "确定要退出应用程序吗？", 
-            "确认退出", JOptionPane.YES_NO_OPTION);
-        
-        if (result == JOptionPane.YES_OPTION) {
-            // 停止提醒服务
-            reminderService.stopReminderService();
-            System.exit(0);
-        }
-    }
-    
-    private void showAbout() {
+
+    private void openThemeSettings() {
         JOptionPane.showMessageDialog(this, 
-            "学生个人课表管理系统 v1.0\n\n" +
-            "功能特性：\n" +
-            "• 用户注册和登录\n" +
-            "• 课程信息管理\n" +
-            "• 课表可视化展示\n" +
-            "• Excel批量导入\n" +
-            "• 课程提醒功能\n\n" +
-            "开发者：学生个人课表管理系统开发团队", 
-            "关于", JOptionPane.INFORMATION_MESSAGE);
+            "孤独摇滚主题设置\n\n" +
+            "当前支持的功能：\n" +
+            "• 点击孤独摇滚按钮启用主题\n" +
+            "• 在课表面板中查看孤独摇滚风格的课程显示\n" +
+            "• 自定义背景图片请参考 resources/backgrounds/README.md\n\n" +
+            "孤独摇滚配色方案：\n" +
+            "• 主色调：粉黄蓝红\n" +
+            "• 浅色背景：白色", 
+            "主题设置", 
+            JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void showAboutDialog() {
+        JOptionPane.showMessageDialog(this,
+            "学生课程管理系统 v2.1.0\n\n" +
+            "功能特色：\n" +
+            "• 支持连堂课导入和显示\n" +
+            "• 孤独摇滚风格主题\n" +
+            "• 课程提醒功能\n" +
+            "• Excel导入\n\n" +
+            "开发者：GoodGroup团队\n" +
+            "主题：孤独摇滚风格\n" +
+            "© 厦门大学信息学院软工2023级学生",
+            "关于",
+            JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void showHelpDialog() {
+        JOptionPane.showMessageDialog(this,
+            "使用帮助\n\n" +
+            "1. 课表查看：\n" +
+            "   • 支持周视图和日视图切换\n" +
+            "   • 连堂课会在所有覆盖时间段显示\n\n" +
+            "2. 课程管理：\n" +
+            "   • 手动添加课程\n" +
+            "   • Excel批量导入（支持连堂课）\n" +
+            "   • 课程编辑和删除\n\n" +
+            "3. 孤独摇滚主题：\n" +
+            "   • 点击孤独摇滚启用主题\n" +
+            "   • 自定义背景图片请查看resources/backgrounds/README.md\n" +
+            "   • 粉黄蓝红配色方案\n\n" +
+            "4. 提醒功能：\n" +
+            "   • 邮件提醒设置\n" +
+            "   • 消息中心查看提醒记录\n\n" +
+            "享受你的课表体验！",
+            "使用帮助",
+            JOptionPane.INFORMATION_MESSAGE);
     }
 } 

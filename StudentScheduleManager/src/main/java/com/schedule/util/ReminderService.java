@@ -146,8 +146,8 @@ public class ReminderService {
             contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
             
             // 图标
-            JLabel iconLabel = new JLabel("⏰");
-            iconLabel.setFont(new Font("Arial", Font.BOLD, 48));
+            JLabel iconLabel = new JLabel("提醒");
+            iconLabel.setFont(new Font("微软雅黑", Font.BOLD, 24));
             iconLabel.setHorizontalAlignment(SwingConstants.CENTER);
             contentPanel.add(iconLabel, BorderLayout.NORTH);
             
