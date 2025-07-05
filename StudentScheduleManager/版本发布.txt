@@ -2,6 +2,6 @@ git checkout -b release-v1.0.0
 git add .
 git commit -m "release-v1.0.0"
 git push origin release-v1.0.0
-git tag -a release-v2.0.0 -m "v2.0.0 2025.7.4"
-git push origin release-v2.0.0
+git tag -a release-v2.1.0 -m "v2.1.0 2025.7.5 ぼっち・ざ・ろっく！"
+git push origin release-v2.1.0
 git push origin tag release-v1.0.0
